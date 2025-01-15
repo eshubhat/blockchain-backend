@@ -7,7 +7,7 @@ import Notification from "./db/notifications.js";
 import notificationRoute from "./routes/notification.routes.js";
 // import abi from "./MedicalBlockchain.json" assert { type: "json" };
 import { createRequire } from "module";
-const require = createRequire(import.meta.url);
+const require = createRequire(process.url);
 const abi = require("./MedicalBlockchain.json");
 
 configDotenv({ path: "./.env" });
@@ -15,10 +15,12 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-console.log(process.env.WSS_SEPOLIA_RPC_URL);
+console.log(import.meta.env.WSS_SEPOLIA_RPC_URL);
 
-const provider = new ethers.WebSocketProvider(process.env.WSS_SEPOLIA_RPC_URL);
-const contractAddress = process.env.CONTRACT_ADDRESS;
+const provider = new ethers.WebSocketProvider(
+  import.meta.env.WSS_SEPOLIA_RPC_URL
+);
+const contractAddress = import.meta.env.CONTRACT_ADDRESS;
 // const contractABI = [
 //   "event AccessRequested(uint256 indexed requestId, address indexed hospital, uint256 indexed recordId, address patient, address uploadingHospital)",
 // ];
@@ -45,6 +47,8 @@ contract.on(
       transactionHash: event.transactionHash,
       blockNumber: event.blockNumber,
     });
+
+    console.log("Event handled successfully.");
   }
 );
 
@@ -81,12 +85,12 @@ async function handleAccessRequest({
 app.use("/notifications", notificationRoute);
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(import.meta.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Routes
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = import.meta.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

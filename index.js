@@ -5,7 +5,10 @@ import cors from "cors";
 import { configDotenv } from "dotenv";
 import Notification from "./db/notifications.js";
 import notificationRoute from "./routes/notification.routes.js";
-import abi from "./MedicalBlockchain.json" assert { type: "json" };
+// import abi from "./MedicalBlockchain.json" assert { type: "json" };
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const abi = require("./MedicalBlockchain.json");
 
 configDotenv({ path: "./.env" });
 const app = express();
